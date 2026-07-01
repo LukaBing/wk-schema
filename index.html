@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>WK Voetbal 2026 - Alle Uitslagen | Sportredactie</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #ffffff;
+    --panel: #f4f4f2;
+    --line: #d9d9d4;
+    --brand: #b3121b;
+    --navy: #0d1b3e;
+    --muted: #6b6b66;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: Georgia, "Times New Roman", serif;
+    background-color: #2f9e44;
+    background-image:
+      radial-gradient(circle at center, transparent 68px, rgba(255,255,255,0.55) 70px, rgba(255,255,255,0.55) 74px, transparent 76px),
+      linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)),
+      repeating-linear-gradient(180deg, #2f9e44 0px, #2f9e44 60px, #37ab4f 60px, #37ab4f 120px);
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center center, center center, center top;
+    background-size: 160px 160px, 100% 2px, 100% 120px;
+    background-attachment: fixed, fixed, fixed;
+  }
+
+  a { color: inherit; }
+
+  main {
+    background: var(--paper);
+    box-shadow: 0 0 0 1px var(--line), 0 6px 24px rgba(0,0,0,0.25);
+  }
+
+  /* Masthead */
+  .topbar {
+    background: var(--navy);
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  header.masthead {
+    background: var(--paper);
+    border-bottom: 4px solid var(--ink);
+    padding: 24px 20px 14px 20px;
+    text-align: center;
+  }
+
+  header.masthead .kicker {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--brand);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  header.masthead h1 {
+    font-size: 46px;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  header.masthead .tagline {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 30px 20px 60px 20px;
+  }
+
+  .lead {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 20px 26px;
+    margin-bottom: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .lead .dateline {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* Breaking news box for knockout round */
+  .breaking {
+    background: var(--brand);
+    color: #fff;
+    padding: 18px 24px 4px 24px;
+    margin-bottom: 34px;
+  }
+
+  .breaking .flag {
+    display: inline-block;
+    background: #fff;
+    color: var(--brand);
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    margin-bottom: 10px;
+  }
+
+  .breaking h2 {
+    margin: 0 0 14px 0;
+    font-size: 26px;
+  }
+
+  .breaking table { background: #fff; color: var(--ink); }
+  .breaking table th { background: var(--navy); }
+
+  /* Section headers per group */
+  h2.section-title {
+    font-size: 22px;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 6px;
+    margin: 36px 0 14px 0;
+  }
+
+  h2.section-title .tag {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .group-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 30px;
+  }
+
+  article.group-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  article.group-card h3 {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--ink);
+    color: #fff;
+    margin: 0;
+    padding: 8px 14px;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+
+  table.wk {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  table.wk th, table.wk td {
+    padding: 7px 12px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  table.wk th {
+    background: var(--panel);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  table.wk tr:nth-child(even) td { background: #fafafa; }
+
+  table.wk td.score {
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  footer {
+    background: var(--ink);
+    color: #bbb;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    text-align: center;
+    padding: 16px;
+  }
+
+  /* Upcoming schedule */
+  .schedule-box {
+    border: 2px solid var(--navy);
+    background: var(--paper);
+    padding: 18px 24px 6px 24px;
+    margin-bottom: 34px;
+  }
+
+  .schedule-box .flag.upcoming {
+    background: var(--navy);
+    color: #fff;
+  }
+
+  .schedule-box > h2 {
+    margin: 0 0 4px 0;
+    font-size: 26px;
+  }
+
+  .schedule-box .sub {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .round-block { margin-bottom: 22px; }
+
+  .round-block h3 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--panel);
+    color: var(--navy);
+    padding: 7px 12px;
+    margin: 0 0 8px 0;
+    border-left: 4px solid var(--navy);
+  }
+
+  table.wk td.vs { color: var(--navy); font-weight: bold; }
+
+  /* Top scorers */
+  .scorers-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 34px;
+  }
+
+  .scorer-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    text-align: center;
+    padding: 16px 10px;
+  }
+
+  .scorer-card img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 50%;
+    border: 3px solid var(--brand);
+    margin-bottom: 10px;
+  }
+
+  .scorer-card .goals {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: var(--brand);
+    font-size: 26px;
+    line-height: 1;
+  }
+
+  .scorer-card .goals span {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: normal;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .scorer-card .name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .scorer-card .team {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Title odds */
+  .predict-box {
+    border: 2px solid #b8860b;
+    background: var(--paper);
+    padding: 18px 24px 22px 24px;
+    margin-bottom: 34px;
+  }
+
+  .predict-box .flag.odds {
+    background: #b8860b;
+    color: #fff;
+  }
+
+  .predict-box > h2 {
+    margin: 0 0 4px 0;
+    font-size: 26px;
+  }
+
+  .predict-box .sub {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  .odds-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .odds-row .rank {
+    width: 18px;
+    font-weight: bold;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .odds-row .team {
+    width: 130px;
+    font-weight: bold;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .odds-row .bar-track {
+    flex: 1;
+    background: var(--panel);
+    height: 16px;
+  }
+
+  .odds-row .bar-fill {
+    background: #b8860b;
+    height: 100%;
+  }
+
+  .odds-row .pct {
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .predict-box .note {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <span>SPORTREDACTIE</span>
+  <span>Bijgewerkt t/m 30 juni 2026</span>
+</div>
+
+<header class="masthead">
+  <div class="kicker">Voetbal &middot; WK 2026</div>
+  <h1>WK Voetbal 2026: Alle Uitslagen</h1>
+  <div class="tagline">Groepsfase compleet &mdash; achtste finales onderweg</div>
+</header>
+
+<main>
+
+  <div class="lead">
+    <div class="dateline">Verslag &middot; Groepsfase &amp; Achtste Finales</div>
+    Een compleet overzicht van elke wedstrijd die tot nu toe is gespeeld op het WK 2026 in de Verenigde Staten,
+    Mexico en Canada, inclusief de eindstand en de doelpuntenmakers per wedstrijd.
+  </div>
+
+  <div class="breaking">
+    <span class="flag">Nieuws</span>
+    <h2>Zestiende Finales (Ronde van 32) &mdash; Tot Nu Toe Gespeeld</h2>
+    <table class="wk">
+      <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpuntenmakers</th></tr>
+      <tr><td>Canada - Zuid-Afrika (28 juni)</td><td class="score">1-0</td><td>Stephen Eustáquio 90+2'</td></tr>
+      <tr><td>Brazilië - Japan (29 juni)</td><td class="score">2-1</td><td>Casemiro 56', Gabriel Martinelli 90+5' | Kaishū Sano 29'</td></tr>
+      <tr><td>Duitsland - Paraguay (29 juni)</td><td class="score">1-1 (Paraguay wint na strafschoppen 4-3)</td><td>Kai Havertz 54' | Julio Enciso 42'</td></tr>
+      <tr><td>Nederland - Marokko (29 juni)</td><td class="score">1-1 (Marokko wint na strafschoppen 3-2)</td><td>Cody Gakpo 72' | Issa Diop 90+1'</td></tr>
+      <tr><td>Ivoorkust - Noorwegen (30 juni)</td><td class="score">1-2</td><td>Amad Diallo 74' | Antonio Nusa 39', Erling Haaland 86'</td></tr>
+      <tr><td>Frankrijk - Zweden (30 juni)</td><td class="score">3-0</td><td>Kylian Mbappé 45', 74', Bradley Barcola 53'</td></tr>
+      <tr><td>Mexico - Ecuador (30 juni)</td><td class="score">2-0</td><td>Julián Quiñones 22', Raúl Jiménez 31'</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title"><span class="tag">Statistieken</span>Topscorers Tot Nu Toe</h2>
+
+  <div class="scorers-grid">
+    <div class="scorer-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Lionel_Messi_NE_Revolution_Inter_Miami_7.9.25-178_%28cropped_2%29.jpg/250px-Lionel_Messi_NE_Revolution_Inter_Miami_7.9.25-178_%28cropped_2%29.jpg" alt="Lionel Messi">
+      <div class="goals">6<span>Goals</span></div>
+      <div class="name">Lionel Messi</div>
+      <div class="team">Argentinië</div>
+    </div>
+    <div class="scorer-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Kylian_Mbappe_France_v_Senegal_16_June_2026-391_%28cropped%29.jpg/250px-Kylian_Mbappe_France_v_Senegal_16_June_2026-391_%28cropped%29.jpg" alt="Kylian Mbappé">
+      <div class="goals">6<span>Goals</span></div>
+      <div class="name">Kylian Mbappé</div>
+      <div class="team">Frankrijk</div>
+    </div>
+    <div class="scorer-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg/250px-Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg" alt="Erling Haaland">
+      <div class="goals">5<span>Goals</span></div>
+      <div class="name">Erling Haaland</div>
+      <div class="team">Noorwegen</div>
+    </div>
+    <div class="scorer-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Ousmane_Dembele_France_v_Senegal_16_June_2026-341_%28cropped%29.jpg/250px-Ousmane_Dembele_France_v_Senegal_16_June_2026-341_%28cropped%29.jpg" alt="Ousmane Dembélé">
+      <div class="goals">4<span>Goals</span></div>
+      <div class="name">Ousmane Dembélé</div>
+      <div class="team">Frankrijk</div>
+    </div>
+    <div class="scorer-card">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_%28cropped%29.jpg/250px-Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_%28cropped%29.jpg" alt="Vinícius Júnior">
+      <div class="goals">4<span>Goals</span></div>
+      <div class="name">Vinícius Júnior</div>
+      <div class="team">Brazilië</div>
+    </div>
+  </div>
+
+  <div class="predict-box">
+    <span class="flag odds">Voorspelling</span>
+    <h2>Winstkansen &mdash; Wie Wordt Wereldkampioen?</h2>
+    <div class="sub">Percentages volgens de Opta-supercomputer (25.000 simulaties), bijgewerkt na de groepsfase. Duitsland en Nederland zijn hierna alsnog uitgeschakeld in de zestiende finales.</div>
+
+    <div class="odds-row">
+      <div class="rank">1</div>
+      <div class="team">Frankrijk</div>
+      <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+      <div class="pct">18,7%</div>
+    </div>
+    <div class="odds-row">
+      <div class="rank">2</div>
+      <div class="team">Argentinië</div>
+      <div class="bar-track"><div class="bar-fill" style="width: 87%"></div></div>
+      <div class="pct">16,3%</div>
+    </div>
+    <div class="odds-row">
+      <div class="rank">3</div>
+      <div class="team">Spanje</div>
+      <div class="bar-track"><div class="bar-fill" style="width: 72%"></div></div>
+      <div class="pct">13,5%</div>
+    </div>
+    <div class="odds-row">
+      <div class="rank">4</div>
+      <div class="team">Engeland</div>
+      <div class="bar-track"><div class="bar-fill" style="width: 52%"></div></div>
+      <div class="pct">9,7%</div>
+    </div>
+    <div class="odds-row">
+      <div class="rank">5</div>
+      <div class="team">Brazilië</div>
+      <div class="bar-track"><div class="bar-fill" style="width: 35%"></div></div>
+      <div class="pct">6,5%</div>
+    </div>
+    <div class="note">Bron: Opta Analyst supercomputer-voorspelling, knock-outfase. Duitsland (verloor van Paraguay na strafschoppen) en Nederland (verloor van Marokko na strafschoppen) zijn ondertussen uitgeschakeld en meegeteld bij "overige landen".</div>
+  </div>
+
+  <h2 class="section-title"><span class="tag">Groepsfase</span>Alle Uitslagen per Groep</h2>
+
+  <div class="group-grid">
+
+    <article class="group-card">
+      <h3>GROEP A</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Mexico - Zuid-Afrika</td><td class="score">2-0</td><td>Julián Quiñones 9', Raúl Jiménez 67'</td></tr>
+        <tr><td>Zuid-Korea - Tsjechië</td><td class="score">2-1</td><td>Hwang In-beom 67', Oh Hyeon-gyu 80' | Ladislav Krejčí 59'</td></tr>
+        <tr><td>Tsjechië - Zuid-Afrika</td><td class="score">1-1</td><td>Michal Sadílek 6' | Teboho Mokoena 83' (pen)</td></tr>
+        <tr><td>Mexico - Zuid-Korea</td><td class="score">1-0</td><td>Luis Romo 50'</td></tr>
+        <tr><td>Tsjechië - Mexico</td><td class="score">0-3</td><td>Mateo Chávez 55', Julián Quiñones 61', Álvaro Fidalgo 90+4'</td></tr>
+        <tr><td>Zuid-Afrika - Zuid-Korea</td><td class="score">1-0</td><td>Thapelo Maseko 63'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP B</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Canada - Bosnië en Herzegovina</td><td class="score">1-1</td><td>Cyle Larin 78' | Jovo Lukić 21'</td></tr>
+        <tr><td>Qatar - Zwitserland</td><td class="score">1-1</td><td>Miro Muheim (e.d.) 90+4' | Breel Embolo 17' (pen)</td></tr>
+        <tr><td>Zwitserland - Bosnië en Herzegovina</td><td class="score">4-1</td><td>Johan Manzambi 74', 90', Rubén Vargas 84', Granit Xhaka 90+7' (pen) | Ermin Mahmić 90+3'</td></tr>
+        <tr><td>Canada - Qatar</td><td class="score">6-0</td><td>Cyle Larin 16', Jonathan David 29', 45+3', 90+2', Nathan Saliba 64', Mohamed Manai (e.d.) 75'</td></tr>
+        <tr><td>Zwitserland - Canada</td><td class="score">2-1</td><td>Rubén Vargas 46', Johan Manzambi 57' | Promise David 76'</td></tr>
+        <tr><td>Bosnië en Herzegovina - Qatar</td><td class="score">3-1</td><td>Kerim Alajbegović 29', Mahmud Abunada (e.d.) 34', Ermin Mahmić 80' | Hassan Al-Haydos 42'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP C</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Brazilië - Marokko</td><td class="score">1-1</td><td>Vinícius Júnior 32' | Ismael Saibari 21'</td></tr>
+        <tr><td>Haïti - Schotland</td><td class="score">0-1</td><td>John McGinn 28'</td></tr>
+        <tr><td>Schotland - Marokko</td><td class="score">0-1</td><td>Ismael Saibari 2'</td></tr>
+        <tr><td>Brazilië - Haïti</td><td class="score">3-0</td><td>Matheus Cunha 23', 36', Vinícius Júnior 45+3'</td></tr>
+        <tr><td>Schotland - Brazilië</td><td class="score">0-3</td><td>Vinícius Júnior 7', 45+3', Matheus Cunha 60'</td></tr>
+        <tr><td>Marokko - Haïti</td><td class="score">4-2</td><td>Achraf Hakimi 39', Ismael Saibari 45+1', Soufiane Rahimi 78', Gessime Yassine 89' | Yassine Bounou (e.d.) 10', Wilson Isidor 43'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP D</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Verenigde Staten - Paraguay</td><td class="score">4-1</td><td>Damián Bobadilla (e.d.) 7', Folarin Balogun 31', 45+5', Giovanni Reyna 90+8' | Maurício 73'</td></tr>
+        <tr><td>Australië - Turkije</td><td class="score">2-0</td><td>Nestory Irankunda 27', Connor Metcalfe 75'</td></tr>
+        <tr><td>Verenigde Staten - Australië</td><td class="score">2-0</td><td>Cameron Burgess (e.d.) 11', Alex Freeman 43'</td></tr>
+        <tr><td>Turkije - Paraguay</td><td class="score">0-1</td><td>Matías Galarza 2'</td></tr>
+        <tr><td>Turkije - Verenigde Staten</td><td class="score">3-2</td><td>Arda Güler 10', Barış Alper Yılmaz 31', Kaan Ayhan 90+8' | Auston Trusty 3', Sebastian Berhalter 49'</td></tr>
+        <tr><td>Paraguay - Australië</td><td class="score">0-0</td><td>-</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP E</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Duitsland - Curaçao</td><td class="score">7-1</td><td>Felix Nmecha 6', Nico Schlotterbeck 38', Kai Havertz 45+5' (pen), 88', Jamal Musiala 47', Nathaniel Brown 68', Deniz Undav 78' | Livano Comenencia 21'</td></tr>
+        <tr><td>Ivoorkust - Ecuador</td><td class="score">1-0</td><td>Amad Diallo 90'</td></tr>
+        <tr><td>Duitsland - Ivoorkust</td><td class="score">2-1</td><td>Deniz Undav 68', 90+4' | Franck Kessié 30'</td></tr>
+        <tr><td>Ecuador - Curaçao</td><td class="score">0-0</td><td>-</td></tr>
+        <tr><td>Curaçao - Ivoorkust</td><td class="score">0-2</td><td>Nicolas Pépé 7', 64'</td></tr>
+        <tr><td>Ecuador - Duitsland</td><td class="score">2-1</td><td>Nilson Angulo 9', Gonzalo Plata 77' | Leroy Sané 2'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP F</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Nederland - Japan</td><td class="score">2-2</td><td>Van Dijk 51', Summerville 64' | Nakamura 57', Kamada 88'</td></tr>
+        <tr><td>Zweden - Tunesië</td><td class="score">5-1</td><td>Ayari 7', 90+6', Isak 30', Gyökeres 59', Svanberg 84' | Rekik 43'</td></tr>
+        <tr><td>Nederland - Zweden</td><td class="score">5-1</td><td>Brobbey 5', 17', Gakpo 47', 54', Summerville 89' | Elanga 59'</td></tr>
+        <tr><td>Tunesië - Japan</td><td class="score">0-4</td><td>Kamada 4', Ueda 31', 83', J. Itō 69'</td></tr>
+        <tr><td>Japan - Zweden</td><td class="score">1-1</td><td>Maeda 56' | Elanga 62'</td></tr>
+        <tr><td>Tunesië - Nederland</td><td class="score">1-3</td><td>Mastouri 54' | Skhiri (e.d.) 3', Brobbey 7', Van Hecke 62'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP G</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>België - Egypte</td><td class="score">1-1</td><td>Emam Ashour 19' | Mohamed Hany (e.d.) 66'</td></tr>
+        <tr><td>Iran - Nieuw-Zeeland</td><td class="score">2-2</td><td>Ramin Rezaeian 32', Mohammad Mohebi 64' | Elijah Just 7', 54'</td></tr>
+        <tr><td>België - Iran</td><td class="score">0-0</td><td>-</td></tr>
+        <tr><td>Nieuw-Zeeland - Egypte</td><td class="score">1-3</td><td>Finn Surman 15' | Mostafa Ziko 58', Mohamed Salah 67', Trézéguet 82'</td></tr>
+        <tr><td>Egypte - Iran</td><td class="score">1-1</td><td>Mahmoud Saber 5' | Ramin Rezaeian 14'</td></tr>
+        <tr><td>Nieuw-Zeeland - België</td><td class="score">1-5</td><td>Elijah Just 84' | Leandro Trossard 28', 50', Kevin De Bruyne 66', Romelu Lukaku 86', Alexis Saelemaekers 90+4'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP H</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Spanje - Kaapverdië</td><td class="score">0-0</td><td>-</td></tr>
+        <tr><td>Saoedi-Arabië - Uruguay</td><td class="score">1-1</td><td>Abdulelah Al-Amri 41' | Maximiliano Araújo 80'</td></tr>
+        <tr><td>Spanje - Saoedi-Arabië</td><td class="score">4-0</td><td>Lamine Yamal 10', Mikel Oyarzabal 21', 24', Hassan Al-Tambakti (e.d.) 49'</td></tr>
+        <tr><td>Uruguay - Kaapverdië</td><td class="score">2-2</td><td>Maximiliano Araújo 44', Agustín Canobbio 45+6' | Kevin Pina 21', Hélio Varela 61'</td></tr>
+        <tr><td>Kaapverdië - Saoedi-Arabië</td><td class="score">0-0</td><td>-</td></tr>
+        <tr><td>Uruguay - Spanje</td><td class="score">0-1</td><td>Álex Baena 42'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP I</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Frankrijk - Senegal</td><td class="score">3-1</td><td>Kylian Mbappé 66', 90+6', Bradley Barcola 82' | Ibrahim Mbaye 90+5'</td></tr>
+        <tr><td>Irak - Noorwegen</td><td class="score">1-4</td><td>Aymen Hussein 39' | Erling Haaland 29', 43', Leo Østigård 76', Aymen Hussein (e.d.) 90+6'</td></tr>
+        <tr><td>Frankrijk - Irak</td><td class="score">3-0</td><td>Kylian Mbappé 14', 54', Ousmane Dembélé 66'</td></tr>
+        <tr><td>Noorwegen - Senegal</td><td class="score">3-2</td><td>Marcus Holmgren Pedersen 43', Erling Haaland 48', 58' | Ismaïla Sarr 53', 90+3'</td></tr>
+        <tr><td>Noorwegen - Frankrijk</td><td class="score">1-4</td><td>Thelo Aasgaard 21' | Ousmane Dembélé 7', 20', 32', Désiré Doué 90+4'</td></tr>
+        <tr><td>Senegal - Irak</td><td class="score">5-0</td><td>Habib Diarra 4', Ismaïla Sarr 56', Pape Gueye 59', 71', Iliman Ndiaye 82'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP J</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Argentinië - Algerije</td><td class="score">3-0</td><td>Lionel Messi 17', 60', 76'</td></tr>
+        <tr><td>Oostenrijk - Jordanië</td><td class="score">3-1</td><td>Romano Schmid 20', Yazan Al-Arab (e.d.) 76', Marko Arnautović 90+12' (pen) | Ali Olwan 50'</td></tr>
+        <tr><td>Argentinië - Oostenrijk</td><td class="score">2-0</td><td>Lionel Messi 38', 90+5'</td></tr>
+        <tr><td>Jordanië - Algerije</td><td class="score">1-2</td><td>Nizar Al-Rashdan 36' | Nadhir Benbouali 69', Amine Gouiri 82'</td></tr>
+        <tr><td>Algerije - Oostenrijk</td><td class="score">3-3</td><td>Rafik Belghali 45', Riyad Mahrez 60', 90+3' | Marko Arnautović 28', Marcel Sabitzer 55', Saša Kalajdžić 90+6'</td></tr>
+        <tr><td>Jordanië - Argentinië</td><td class="score">1-3</td><td>Musa Al-Taamari 55' | Giovani Lo Celso 19', Lautaro Martínez 31' (pen), Lionel Messi 80'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP K</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Portugal - DR Congo</td><td class="score">1-1</td><td>João Neves 6' | Yoane Wissa 45+5'</td></tr>
+        <tr><td>Oezbekistan - Colombia</td><td class="score">1-3</td><td>Abbosbek Fayzullaev 60' | Daniel Muñoz 40', Luis Díaz 65', Jaminton Campaz 90+9'</td></tr>
+        <tr><td>Portugal - Oezbekistan</td><td class="score">5-0</td><td>Cristiano Ronaldo 6', 39', Nuno Mendes 17', Abduvohid Nematov (e.d.) 60', Rafael Leão 87'</td></tr>
+        <tr><td>Colombia - DR Congo</td><td class="score">1-0</td><td>Daniel Muñoz 76'</td></tr>
+        <tr><td>Colombia - Portugal</td><td class="score">0-0</td><td>-</td></tr>
+        <tr><td>DR Congo - Oezbekistan</td><td class="score">3-1</td><td>Yoane Wissa 68' (pen), 90+1', Fiston Mayele 78' | Eldor Shomurodov 10'</td></tr>
+      </table>
+    </article>
+
+    <article class="group-card">
+      <h3>GROEP L</h3>
+      <table class="wk">
+        <tr><th>Wedstrijd</th><th>Uitslag</th><th>Doelpunten</th></tr>
+        <tr><td>Engeland - Kroatië</td><td class="score">4-2</td><td>Harry Kane 12' (pen), 42', Jude Bellingham 47', Marcus Rashford 85' | Martin Baturina 36', Petar Musa 45+5'</td></tr>
+        <tr><td>Ghana - Panama</td><td class="score">1-0</td><td>Caleb Yirenkyi 90+5'</td></tr>
+        <tr><td>Engeland - Ghana</td><td class="score">0-0</td><td>-</td></tr>
+        <tr><td>Panama - Kroatië</td><td class="score">0-1</td><td>Ante Budimir 54'</td></tr>
+        <tr><td>Panama - Engeland</td><td class="score">0-2</td><td>Jude Bellingham 62', Harry Kane 67'</td></tr>
+        <tr><td>Kroatië - Ghana</td><td class="score">2-1</td><td>Petar Sučić 31', Nikola Vlašić 83' | Derrick Luckassen 73'</td></tr>
+      </table>
+    </article>
+
+  </div>
+
+  <div class="schedule-box">
+    <span class="flag upcoming">Programma</span>
+    <h2>Toernooischema &mdash; Nog Te Spelen Wedstrijden</h2>
+    <div class="sub">Alle nog te spelen wedstrijden vanaf 1 juli. Bij ronden die nog niet vaststaan wordt "Winnaar" gebruikt totdat de voorgaande wedstrijd is gespeeld.</div>
+
+    <div class="round-block">
+      <h3>Zestiende Finales (Ronde van 32) &mdash; Resterende Wedstrijden</h3>
+      <table class="wk">
+        <tr><th>Datum</th><th>Wedstrijd</th><th>Locatie</th></tr>
+        <tr><td>1 juli</td><td class="vs">Engeland - DR Congo</td><td>Atlanta</td></tr>
+        <tr><td>1 juli</td><td class="vs">België - Senegal</td><td>Seattle</td></tr>
+        <tr><td>1/2 juli</td><td class="vs">Verenigde Staten - Bosnië en Herzegovina</td><td>Santa Clara</td></tr>
+        <tr><td>2 juli</td><td class="vs">Spanje - Oostenrijk</td><td>Inglewood</td></tr>
+        <tr><td>2 juli</td><td class="vs">Portugal - Kroatië</td><td>Toronto</td></tr>
+        <tr><td>2 juli</td><td class="vs">Zwitserland - Algerije</td><td>Vancouver</td></tr>
+        <tr><td>3 juli</td><td class="vs">Australië - Egypte</td><td>Arlington</td></tr>
+        <tr><td>3 juli</td><td class="vs">Argentinië - Kaapverdië</td><td>Miami Gardens</td></tr>
+        <tr><td>3 juli</td><td class="vs">Colombia - Ghana</td><td>Kansas City</td></tr>
+      </table>
+    </div>
+
+    <div class="round-block">
+      <h3>Achtste Finales (Ronde van 16)</h3>
+      <table class="wk">
+        <tr><th>Datum</th><th>Wedstrijd</th><th>Locatie</th></tr>
+        <tr><td>4 juli</td><td class="vs">Canada - Marokko</td><td>Houston</td></tr>
+        <tr><td>4 juli</td><td class="vs">Paraguay - Frankrijk</td><td>Philadelphia</td></tr>
+        <tr><td>5 juli</td><td class="vs">Brazilië - Noorwegen</td><td>East Rutherford</td></tr>
+        <tr><td>5 juli</td><td class="vs">Mexico - Winnaar (Engeland/DR Congo)</td><td>Mexico-Stad</td></tr>
+        <tr><td>6 juli</td><td class="vs">Winnaar (Portugal/Kroatië) - Winnaar (Spanje/Oostenrijk)</td><td>Arlington</td></tr>
+        <tr><td>6 juli</td><td class="vs">Winnaar (VS/Bosnië) - Winnaar (België/Senegal)</td><td>Seattle</td></tr>
+        <tr><td>7 juli</td><td class="vs">Winnaar (Argentinië/Kaapverdië) - Winnaar (Australië/Egypte)</td><td>Atlanta</td></tr>
+        <tr><td>7 juli</td><td class="vs">Winnaar (Zwitserland/Algerije) - Winnaar (Colombia/Ghana)</td><td>Vancouver</td></tr>
+      </table>
+    </div>
+
+    <div class="round-block">
+      <h3>Kwartfinales</h3>
+      <table class="wk">
+        <tr><th>Datum</th><th>Wedstrijd</th><th>Locatie</th></tr>
+        <tr><td>9 juli</td><td class="vs">Winnaar (Canada/Marokko) - Winnaar (Paraguay/Frankrijk)</td><td>Foxborough</td></tr>
+        <tr><td>10 juli</td><td class="vs">Winnaar (Portugal-Kroatië/Spanje-Oostenrijk) - Winnaar (VS-Bosnië/België-Senegal)</td><td>Inglewood</td></tr>
+        <tr><td>11 juli</td><td class="vs">Winnaar (Brazilië/Noorwegen) - Winnaar (Mexico/Engeland-DR Congo)</td><td>Miami Gardens</td></tr>
+        <tr><td>11 juli</td><td class="vs">Winnaar (Argentinië-Kaapverdië/Australië-Egypte) - Winnaar (Zwitserland-Algerije/Colombia-Ghana)</td><td>Kansas City</td></tr>
+      </table>
+    </div>
+
+    <div class="round-block">
+      <h3>Halve Finales</h3>
+      <table class="wk">
+        <tr><th>Datum</th><th>Wedstrijd</th><th>Locatie</th></tr>
+        <tr><td>14 juli</td><td class="vs">Winnaar Kwartfinale 1 - Winnaar Kwartfinale 3</td><td>Arlington</td></tr>
+        <tr><td>15 juli</td><td class="vs">Winnaar Kwartfinale 2 - Winnaar Kwartfinale 4</td><td>Atlanta</td></tr>
+      </table>
+    </div>
+
+    <div class="round-block">
+      <h3>Troostfinale &amp; Finale</h3>
+      <table class="wk">
+        <tr><th>Datum</th><th>Wedstrijd</th><th>Locatie</th></tr>
+        <tr><td>18 juli</td><td class="vs">Verliezer Halve Finale 1 - Verliezer Halve Finale 2</td><td>Miami Gardens</td></tr>
+        <tr><td>19 juli</td><td class="vs">Winnaar Halve Finale 1 - Winnaar Halve Finale 2 (Finale)</td><td>East Rutherford (MetLife Stadium)</td></tr>
+      </table>
+    </div>
+  </div>
+
+
+</main>
+
+<footer>
+  WK Voetbal 2026 &middot; Sportredactie &middot; Alle uitslagen bijgewerkt t/m 30 juni 2026
+  <br>
+  Gemaakt door Luka
+</footer>
+
+</body>
+</html>
