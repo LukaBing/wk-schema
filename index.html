@@ -831,7 +831,7 @@
   <div class="game-box">
     <span class="flag game">Spel</span>
     <h2>Speel Zelf Mee &mdash; Kies Je Speler</h2>
-    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten. Speler 1 glijdt met Spatie en schiet hard met R. Speler 2 glijdt met Enter en schiet hard met L. Een sliding tackle op de tegenstander zet die even buitenspel.</div>
+    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm aan te nemen en mee te dribbelen. Speler 1 glijdt met Spatie en schiet hard met R. Speler 2 glijdt met Enter en schiet hard met L. Een sliding tackle op de balbezitter pakt de bal af en zet hem even buitenspel.</div>
 
     <div id="gameMenu" class="game-menu">
       <div class="menu-row">
@@ -920,6 +920,7 @@
 
   var scoreRed = 0, scoreBlue = 0;
   var lastTouch = null;
+  var possessor = null;
   var vsBot = false;
   var gameStarted = false;
 
@@ -941,14 +942,18 @@
     var dx = ball.x - p.x, dy = ball.y - p.y;
     var dist = Math.hypot(dx, dy) || 0.01;
     var range = p.r + ball.r + 14;
-    if (dist < range) {
-      var nx = dx / dist, ny = dy / dist;
+    if (possessor === p || dist < range) {
+      var nx = possessor === p ? p.facingX : dx / dist;
+      var ny = possessor === p ? p.facingY : dy / dist;
+      ball.x = p.x + nx * (p.r + ball.r + 2);
+      ball.y = p.y + ny * (p.r + ball.r + 2);
       ball.vx = nx * POWER_SHOT_SPEED;
       ball.vy = ny * POWER_SHOT_SPEED;
       p.kickTime = 14;
       p.kickDirX = nx;
       p.kickDirY = ny;
       lastTouch = p;
+      possessor = null;
     }
   }
 
@@ -964,6 +969,13 @@
       other.y = slider.y + ny * knock;
       other.stunTime = STUN_DURATION;
       slider.hasTackled = true;
+      if (possessor === other) {
+        possessor = slider;
+        lastTouch = slider;
+        slider.kickTime = 10;
+        slider.kickDirX = slider.slideDirX;
+        slider.kickDirY = slider.slideDirY;
+      }
     }
   }
 
@@ -1022,6 +1034,7 @@
     p2.x = W * 0.75; p2.y = H / 2;
     ball.x = W / 2; ball.y = H / 2;
     ball.vx = 0; ball.vy = 0;
+    possessor = null;
   }
 
   function clampPlayer(p) {
@@ -1098,28 +1111,39 @@
     clampPlayer(p2);
 
     [p1, p2].forEach(function (p) {
-      var dx = ball.x - p.x, dy = ball.y - p.y;
-      var dist = Math.hypot(dx, dy) || 0.01;
-      var minDist = p.r + ball.r;
-      if (dist < minDist) {
-        var nx = dx / dist, ny = dy / dist;
-        ball.x = p.x + nx * minDist;
-        ball.y = p.y + ny * minDist;
-        var kick = p.sliding ? 8 : 4.5;
-        ball.vx = nx * kick;
-        ball.vy = ny * kick;
-        p.kickTime = 14;
-        p.kickDirX = nx;
-        p.kickDirY = ny;
-        lastTouch = p;
-      }
       if (p.kickTime > 0) p.kickTime--;
     });
 
+    if (possessor) {
+      // bal blijft aan de voeten van de balbezitter, hij loopt ermee mee
+      ball.x = possessor.x + possessor.facingX * (possessor.r + ball.r + 4);
+      ball.y = possessor.y + possessor.facingY * (possessor.r + ball.r + 4);
+      ball.vx = 0; ball.vy = 0;
+      if (ball.x < ball.r) ball.x = ball.r;
+      if (ball.x > W - ball.r) ball.x = W - ball.r;
+      if (ball.y < ball.r) ball.y = ball.r;
+      if (ball.y > H - ball.r) ball.y = H - ball.r;
+      return;
+    }
+
+    // losse bal: normale fysica, wie 'm raakt neemt 'm aan (geen automatische trap)
     ball.x += ball.vx;
     ball.y += ball.vy;
     ball.vx *= 0.98;
     ball.vy *= 0.98;
+
+    [p1, p2].forEach(function (p) {
+      var dx = ball.x - p.x, dy = ball.y - p.y;
+      var dist = Math.hypot(dx, dy) || 0.01;
+      if (dist < p.r + ball.r) {
+        possessor = p;
+        lastTouch = p;
+        p.kickTime = 8;
+        p.kickDirX = p.facingX;
+        p.kickDirY = p.facingY;
+      }
+    });
+    if (possessor) return;
 
     var hitTop = ball.y < ball.r;
     var hitBottom = ball.y > H - ball.r;
