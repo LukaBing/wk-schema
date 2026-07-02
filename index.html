@@ -777,11 +777,11 @@
   <div class="game-box">
     <span class="flag game">Spel</span>
     <h2>Speel Zelf Mee &mdash; 2-Speler Voetbal</h2>
-    <div class="sub">Klik op het veld om te beginnen. Speler Rood beweegt met W A S D, Speler Blauw met de pijltjestoetsen. Raak de bal om 'm weg te schieten.</div>
+    <div class="sub">Klik op het veld om te beginnen. Ronaldo (rood) beweegt met W A S D, Messi (blauw) met de pijltjestoetsen. Raak de bal om 'm weg te schieten.</div>
 
     <div class="game-controls">
-      <span class="p1">Rood: W A S D</span>
-      <span class="p2">Blauw: &uarr; &darr; &larr; &rarr;</span>
+      <span class="p1">Ronaldo: W A S D</span>
+      <span class="p2">Messi: &uarr; &darr; &larr; &rarr;</span>
     </div>
 
     <canvas id="pitchCanvas" width="700" height="400" tabindex="0"></canvas>
@@ -813,8 +813,13 @@
 
   var scoreRed = 0, scoreBlue = 0;
 
-  var p1 = { x: W * 0.25, y: H / 2, r: 20, color: '#c0392b', speed: 3.2 };
-  var p2 = { x: W * 0.75, y: H / 2, r: 20, color: '#1f4fd8', speed: 3.2 };
+  var p1Img = new Image();
+  p1Img.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cristiano_Ronaldo_2275_%28cropped%29.jpg/250px-Cristiano_Ronaldo_2275_%28cropped%29.jpg';
+  var p2Img = new Image();
+  p2Img.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Lionel_Messi_NE_Revolution_Inter_Miami_7.9.25-178_%28cropped_2%29.jpg/250px-Lionel_Messi_NE_Revolution_Inter_Miami_7.9.25-178_%28cropped_2%29.jpg';
+
+  var p1 = { x: W * 0.25, y: H / 2, r: 22, color: '#c0392b', speed: 3.2, img: p1Img, name: 'Ronaldo' };
+  var p2 = { x: W * 0.75, y: H / 2, r: 22, color: '#1f4fd8', speed: 3.2, img: p2Img, name: 'Messi' };
   var ball = { x: W / 2, y: H / 2, r: 11, vx: 0, vy: 0 };
 
   function resetPositions(scorerSide) {
@@ -922,19 +927,34 @@
     ctx.fillRect(W - 6, GOAL_TOP, 6, GOAL_H);
   }
 
-  function drawPlayer(p, label) {
+  function drawPlayer(p) {
+    ctx.save();
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#fff';
+    ctx.closePath();
+    if (p.img && p.img.complete && p.img.naturalWidth > 0) {
+      ctx.clip();
+      ctx.drawImage(p.img, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+    } else {
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = p.color;
     ctx.stroke();
+
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 14px Arial';
+    ctx.font = 'bold 11px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(label, p.x, p.y);
+    ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+    ctx.lineWidth = 3;
+    ctx.strokeText(p.name, p.x, p.y + p.r + 12);
+    ctx.fillText(p.name, p.x, p.y + p.r + 12);
   }
 
   function drawBall() {
@@ -949,8 +969,8 @@
 
   function draw() {
     drawPitch();
-    drawPlayer(p1, '1');
-    drawPlayer(p2, '2');
+    drawPlayer(p1);
+    drawPlayer(p2);
     drawBall();
   }
 
