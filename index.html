@@ -1034,7 +1034,11 @@
     var hitLeft = ball.x < ball.r;
     var hitRight = ball.x > W - ball.r;
 
-    if ((hitTop || hitBottom) && (hitLeft || hitRight)) {
+    var CORNER_ZONE = 55;
+    var nearCorner = (ball.x < CORNER_ZONE || ball.x > W - CORNER_ZONE) &&
+                      (ball.y < CORNER_ZONE || ball.y > H - CORNER_ZONE);
+
+    if ((hitTop || hitBottom || hitLeft || hitRight) && nearCorner) {
       // bal raakt een hoek: bal is uit, terug naar het midden
       resetPositions();
       return;
