@@ -69,7 +69,7 @@
   }
 
   header.masthead h1 {
-    font-size: 46px;
+    font-size: 58px;
     margin: 0;
     letter-spacing: -0.5px;
   }
@@ -82,9 +82,9 @@
   }
 
   main {
-    max-width: 980px;
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 30px 20px 60px 20px;
+    padding: 40px 30px 70px 30px;
   }
 
   .lead {
@@ -136,7 +136,7 @@
 
   /* Section headers per group */
   h2.section-title {
-    font-size: 22px;
+    font-size: 26px;
     border-bottom: 3px solid var(--ink);
     padding-bottom: 6px;
     margin: 36px 0 14px 0;
@@ -251,6 +251,61 @@
   }
 
   table.wk td.vs { color: var(--navy); font-weight: bold; }
+
+  /* Mini game */
+  .game-box {
+    border: 2px solid #1b6e2e;
+    background: var(--paper);
+    padding: 18px 24px 24px 24px;
+    margin-bottom: 34px;
+    text-align: center;
+  }
+
+  .game-box .flag.game {
+    background: #1b6e2e;
+    color: #fff;
+  }
+
+  .game-box > h2 {
+    margin: 0 0 4px 0;
+    font-size: 26px;
+    text-align: left;
+  }
+
+  .game-box .sub {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+
+  .game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .game-controls .p1 { color: #c0392b; font-weight: bold; }
+  .game-controls .p2 { color: #1f4fd8; font-weight: bold; }
+
+  #pitchCanvas {
+    background: #2f9e44;
+    border: 4px solid #1b6e2e;
+    max-width: 100%;
+    touch-action: none;
+    cursor: pointer;
+  }
+
+  .game-hint {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
 
   /* Top scorers */
   .scorers-grid {
@@ -386,7 +441,7 @@
 
 <div class="topbar">
   <span>SPORTREDACTIE</span>
-  <span>Bijgewerkt t/m 30 juni 2026</span>
+  <span>Bijgewerkt t/m 1 juli 2026</span>
 </div>
 
 <header class="masthead">
@@ -415,6 +470,9 @@
       <tr><td>Ivoorkust - Noorwegen (30 juni)</td><td class="score">1-2</td><td>Amad Diallo 74' | Antonio Nusa 39', Erling Haaland 86'</td></tr>
       <tr><td>Frankrijk - Zweden (30 juni)</td><td class="score">3-0</td><td>Kylian Mbappé 45', 74', Bradley Barcola 53'</td></tr>
       <tr><td>Mexico - Ecuador (30 juni)</td><td class="score">2-0</td><td>Julián Quiñones 22', Raúl Jiménez 31'</td></tr>
+      <tr><td>Verenigde Staten - Bosnië en Herzegovina (1 juli)</td><td class="score">2-0</td><td>Folarin Balogun 45', Malik Tillman 82'</td></tr>
+      <tr><td>Engeland - DR Congo (1 juli)</td><td class="score">2-1</td><td>Harry Kane 75', 86' | Brian Cipenga 7'</td></tr>
+      <tr><td>België - Senegal (1 juli)</td><td class="score">3-2 (na verlenging)</td><td>Romelu Lukaku 86', Youri Tielemans 89', 120+5' (pen) | Habib Diarra 25', Ismaïla Sarr 51'</td></tr>
     </table>
   </div>
 
@@ -662,9 +720,6 @@
       <h3>Zestiende Finales (Ronde van 32) &mdash; Resterende Wedstrijden</h3>
       <table class="wk">
         <tr><th>Datum</th><th>Wedstrijd</th><th>Locatie</th></tr>
-        <tr><td>1 juli</td><td class="vs">Engeland - DR Congo</td><td>Atlanta</td></tr>
-        <tr><td>1 juli</td><td class="vs">België - Senegal</td><td>Seattle</td></tr>
-        <tr><td>1/2 juli</td><td class="vs">Verenigde Staten - Bosnië en Herzegovina</td><td>Santa Clara</td></tr>
         <tr><td>2 juli</td><td class="vs">Spanje - Oostenrijk</td><td>Inglewood</td></tr>
         <tr><td>2 juli</td><td class="vs">Portugal - Kroatië</td><td>Toronto</td></tr>
         <tr><td>2 juli</td><td class="vs">Zwitserland - Algerije</td><td>Vancouver</td></tr>
@@ -681,9 +736,9 @@
         <tr><td>4 juli</td><td class="vs">Canada - Marokko</td><td>Houston</td></tr>
         <tr><td>4 juli</td><td class="vs">Paraguay - Frankrijk</td><td>Philadelphia</td></tr>
         <tr><td>5 juli</td><td class="vs">Brazilië - Noorwegen</td><td>East Rutherford</td></tr>
-        <tr><td>5 juli</td><td class="vs">Mexico - Winnaar (Engeland/DR Congo)</td><td>Mexico-Stad</td></tr>
+        <tr><td>5 juli</td><td class="vs">Mexico - Engeland</td><td>Mexico-Stad</td></tr>
         <tr><td>6 juli</td><td class="vs">Winnaar (Portugal/Kroatië) - Winnaar (Spanje/Oostenrijk)</td><td>Arlington</td></tr>
-        <tr><td>6 juli</td><td class="vs">Winnaar (VS/Bosnië) - Winnaar (België/Senegal)</td><td>Seattle</td></tr>
+        <tr><td>6 juli</td><td class="vs">Verenigde Staten - België</td><td>Seattle</td></tr>
         <tr><td>7 juli</td><td class="vs">Winnaar (Argentinië/Kaapverdië) - Winnaar (Australië/Egypte)</td><td>Atlanta</td></tr>
         <tr><td>7 juli</td><td class="vs">Winnaar (Zwitserland/Algerije) - Winnaar (Colombia/Ghana)</td><td>Vancouver</td></tr>
       </table>
@@ -719,11 +774,199 @@
     </div>
   </div>
 
+  <div class="game-box">
+    <span class="flag game">Spel</span>
+    <h2>Speel Zelf Mee &mdash; 2-Speler Voetbal</h2>
+    <div class="sub">Klik op het veld om te beginnen. Speler Rood beweegt met W A S D, Speler Blauw met de pijltjestoetsen. Raak de bal om 'm weg te schieten.</div>
+
+    <div class="game-controls">
+      <span class="p1">Rood: W A S D</span>
+      <span class="p2">Blauw: &uarr; &darr; &larr; &rarr;</span>
+    </div>
+
+    <canvas id="pitchCanvas" width="700" height="400" tabindex="0"></canvas>
+    <div class="game-hint">Score: <span id="scoreDisplay">0 - 0</span></div>
+  </div>
 
 </main>
 
+<script>
+(function () {
+  var canvas = document.getElementById('pitchCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var GOAL_H = 130;
+  var GOAL_TOP = (H - GOAL_H) / 2;
+  var GOAL_BOTTOM = GOAL_TOP + GOAL_H;
+  var scoreDisplay = document.getElementById('scoreDisplay');
+
+  var keys = {};
+  canvas.addEventListener('keydown', function (e) {
+    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    if (used.indexOf(e.code) !== -1) e.preventDefault();
+    keys[e.code] = true;
+  });
+  canvas.addEventListener('keyup', function (e) {
+    keys[e.code] = false;
+  });
+  canvas.addEventListener('click', function () { canvas.focus(); });
+
+  var scoreRed = 0, scoreBlue = 0;
+
+  var p1 = { x: W * 0.25, y: H / 2, r: 20, color: '#c0392b', speed: 3.2 };
+  var p2 = { x: W * 0.75, y: H / 2, r: 20, color: '#1f4fd8', speed: 3.2 };
+  var ball = { x: W / 2, y: H / 2, r: 11, vx: 0, vy: 0 };
+
+  function resetPositions(scorerSide) {
+    p1.x = W * 0.25; p1.y = H / 2;
+    p2.x = W * 0.75; p2.y = H / 2;
+    ball.x = W / 2; ball.y = H / 2;
+    ball.vx = 0; ball.vy = 0;
+  }
+
+  function clampPlayer(p) {
+    if (p.x < p.r) p.x = p.r;
+    if (p.x > W - p.r) p.x = W - p.r;
+    if (p.y < p.r) p.y = p.r;
+    if (p.y > H - p.r) p.y = H - p.r;
+  }
+
+  function update() {
+    var p1dx = 0, p1dy = 0;
+    if (keys['KeyW']) p1dy -= 1;
+    if (keys['KeyS']) p1dy += 1;
+    if (keys['KeyA']) p1dx -= 1;
+    if (keys['KeyD']) p1dx += 1;
+    var len1 = Math.hypot(p1dx, p1dy) || 1;
+    p1.x += (p1dx / len1) * p1.speed;
+    p1.y += (p1dy / len1) * p1.speed;
+
+    var p2dx = 0, p2dy = 0;
+    if (keys['ArrowUp']) p2dy -= 1;
+    if (keys['ArrowDown']) p2dy += 1;
+    if (keys['ArrowLeft']) p2dx -= 1;
+    if (keys['ArrowRight']) p2dx += 1;
+    var len2 = Math.hypot(p2dx, p2dy) || 1;
+    p2.x += (p2dx / len2) * p2.speed;
+    p2.y += (p2dy / len2) * p2.speed;
+
+    clampPlayer(p1);
+    clampPlayer(p2);
+
+    [p1, p2].forEach(function (p) {
+      var dx = ball.x - p.x, dy = ball.y - p.y;
+      var dist = Math.hypot(dx, dy) || 0.01;
+      var minDist = p.r + ball.r;
+      if (dist < minDist) {
+        var nx = dx / dist, ny = dy / dist;
+        ball.x = p.x + nx * minDist;
+        ball.y = p.y + ny * minDist;
+        var kick = 4.5;
+        ball.vx = nx * kick;
+        ball.vy = ny * kick;
+      }
+    });
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+    ball.vx *= 0.98;
+    ball.vy *= 0.98;
+
+    if (ball.y < ball.r) { ball.y = ball.r; ball.vy *= -1; }
+    if (ball.y > H - ball.r) { ball.y = H - ball.r; ball.vy *= -1; }
+
+    if (ball.x < ball.r) {
+      if (ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM) {
+        scoreBlue++;
+        scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
+        resetPositions();
+      } else {
+        ball.x = ball.r; ball.vx *= -1;
+      }
+    }
+    if (ball.x > W - ball.r) {
+      if (ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM) {
+        scoreRed++;
+        scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
+        resetPositions();
+      } else {
+        ball.x = W - ball.r; ball.vx *= -1;
+      }
+    }
+  }
+
+  function drawPitch() {
+    ctx.fillStyle = '#2f9e44';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(4, 4, W - 8, H - 8);
+
+    ctx.beginPath();
+    ctx.moveTo(W / 2, 0);
+    ctx.lineTo(W / 2, H);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(W / 2, H / 2, 55, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.beginPath();
+    ctx.arc(W / 2, H / 2, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, GOAL_TOP, 6, GOAL_H);
+    ctx.fillRect(W - 6, GOAL_TOP, 6, GOAL_H);
+  }
+
+  function drawPlayer(p, label) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, p.x, p.y);
+  }
+
+  function drawBall() {
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.stroke();
+  }
+
+  function draw() {
+    drawPitch();
+    drawPlayer(p1, '1');
+    drawPlayer(p2, '2');
+    drawBall();
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  draw();
+  requestAnimationFrame(loop);
+})();
+</script>
+
 <footer>
-  WK Voetbal 2026 &middot; Sportredactie &middot; Alle uitslagen bijgewerkt t/m 30 juni 2026
+  WK Voetbal 2026 &middot; Sportredactie &middot; Alle uitslagen bijgewerkt t/m 1 juli 2026
   <br>
   Gemaakt door Luka
 </footer>
