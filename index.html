@@ -1029,10 +1029,21 @@
     ball.vx *= 0.98;
     ball.vy *= 0.98;
 
-    if (ball.y < ball.r) { ball.y = ball.r; ball.vy *= -1; }
-    if (ball.y > H - ball.r) { ball.y = H - ball.r; ball.vy *= -1; }
+    var hitTop = ball.y < ball.r;
+    var hitBottom = ball.y > H - ball.r;
+    var hitLeft = ball.x < ball.r;
+    var hitRight = ball.x > W - ball.r;
 
-    if (ball.x < ball.r) {
+    if ((hitTop || hitBottom) && (hitLeft || hitRight)) {
+      // bal raakt een hoek: bal is uit, terug naar het midden
+      resetPositions();
+      return;
+    }
+
+    if (hitTop) { ball.y = ball.r; ball.vy *= -1; }
+    if (hitBottom) { ball.y = H - ball.r; ball.vy *= -1; }
+
+    if (hitLeft) {
       if (ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM) {
         scoreBlue++;
         scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
@@ -1041,7 +1052,7 @@
         ball.x = ball.r; ball.vx *= -1;
       }
     }
-    if (ball.x > W - ball.r) {
+    if (hitRight) {
       if (ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM) {
         scoreRed++;
         scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
