@@ -831,7 +831,7 @@
   <div class="game-box">
     <span class="flag game">Spel</span>
     <h2>Speel Zelf Mee &mdash; Kies Je Speler</h2>
-    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten. Speler 1 glijdt met Spatie en schiet hard met F. Speler 2 glijdt met Enter en schiet hard met L. Een sliding tackle op de tegenstander zet die even buitenspel.</div>
+    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten. Speler 1 glijdt met Spatie en schiet hard met R. Speler 2 glijdt met Enter en schiet hard met L. Een sliding tackle op de tegenstander zet die even buitenspel.</div>
 
     <div id="gameMenu" class="game-menu">
       <div class="menu-row">
@@ -905,12 +905,12 @@
 
   var keys = {};
   canvas.addEventListener('keydown', function (e) {
-    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter', 'KeyF', 'KeyL'];
+    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter', 'KeyR', 'KeyL'];
     if (used.indexOf(e.code) !== -1) e.preventDefault();
     keys[e.code] = true;
     if (e.code === 'Space' && !e.repeat) startSlide(p1);
     if (e.code === 'Enter' && !e.repeat && !vsBot) startSlide(p2);
-    if (e.code === 'KeyF' && !e.repeat) powerShot(p1);
+    if (e.code === 'KeyR' && !e.repeat) powerShot(p1);
     if (e.code === 'KeyL' && !e.repeat && !vsBot) powerShot(p2);
   });
   canvas.addEventListener('keyup', function (e) {
@@ -1002,7 +1002,7 @@
     p1.sliding = false; p1.slideTimer = 0; p1.slideCooldown = 0; p1.hasTackled = false; p1.stunTime = 0;
     p2.sliding = false; p2.slideTimer = 0; p2.slideCooldown = 0; p2.hasTackled = false; p2.stunTime = 0;
 
-    p1ControlLabel.textContent = p1.name + ': W A S D (glijden: Spatie, power shot: F)';
+    p1ControlLabel.textContent = p1.name + ': W A S D (glijden: Spatie, power shot: R)';
     p2ControlLabel.textContent = vsBot ? (p2.name + ' (bot)') : (p2.name + ': ↑ ↓ ← → (glijden: Enter, power shot: L)');
 
     gameMenu.style.display = 'none';
