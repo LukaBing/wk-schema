@@ -831,7 +831,7 @@
   <div class="game-box">
     <span class="flag game">Spel</span>
     <h2>Speel Zelf Mee &mdash; Kies Je Speler</h2>
-    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten. Speler 1 glijdt met Spatie, Speler 2 met Enter.</div>
+    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten. Speler 1 glijdt met Spatie en schiet hard met F. Speler 2 glijdt met Enter en schiet hard met /. Een sliding tackle op de tegenstander zet die even buitenspel.</div>
 
     <div id="gameMenu" class="game-menu">
       <div class="menu-row">
@@ -900,14 +900,18 @@
   var SLIDE_DURATION = 16;
   var SLIDE_SPEED = 7.5;
   var SLIDE_COOLDOWN = 50;
+  var STUN_DURATION = 22;
+  var POWER_SHOT_SPEED = 13;
 
   var keys = {};
   canvas.addEventListener('keydown', function (e) {
-    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter'];
+    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter', 'KeyF', 'Slash'];
     if (used.indexOf(e.code) !== -1) e.preventDefault();
     keys[e.code] = true;
     if (e.code === 'Space' && !e.repeat) startSlide(p1);
     if (e.code === 'Enter' && !e.repeat && !vsBot) startSlide(p2);
+    if (e.code === 'KeyF' && !e.repeat) powerShot(p1);
+    if (e.code === 'Slash' && !e.repeat && !vsBot) powerShot(p2);
   });
   canvas.addEventListener('keyup', function (e) {
     keys[e.code] = false;
@@ -919,16 +923,48 @@
   var vsBot = false;
   var gameStarted = false;
 
-  var p1 = Object.assign({ x: W * 0.25, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: 1, kickDirY: 0, facingX: 1, facingY: 0, sliding: false, slideTimer: 0, slideCooldown: 0, slideDirX: 1, slideDirY: 0 }, CHAR_DATA.ronaldo);
-  var p2 = Object.assign({ x: W * 0.75, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: -1, kickDirY: 0, facingX: -1, facingY: 0, sliding: false, slideTimer: 0, slideCooldown: 0, slideDirX: -1, slideDirY: 0 }, CHAR_DATA.messi);
+  var p1 = Object.assign({ x: W * 0.25, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: 1, kickDirY: 0, facingX: 1, facingY: 0, sliding: false, slideTimer: 0, slideCooldown: 0, slideDirX: 1, slideDirY: 0, hasTackled: false, stunTime: 0 }, CHAR_DATA.ronaldo);
+  var p2 = Object.assign({ x: W * 0.75, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: -1, kickDirY: 0, facingX: -1, facingY: 0, sliding: false, slideTimer: 0, slideCooldown: 0, slideDirX: -1, slideDirY: 0, hasTackled: false, stunTime: 0 }, CHAR_DATA.messi);
   var ball = { x: W / 2, y: H / 2, r: 11, vx: 0, vy: 0 };
 
   function startSlide(p) {
-    if (p.sliding || p.slideCooldown > 0) return;
+    if (p.sliding || p.slideCooldown > 0 || p.stunTime > 0) return;
     p.sliding = true;
     p.slideTimer = SLIDE_DURATION;
     p.slideDirX = p.facingX;
     p.slideDirY = p.facingY;
+    p.hasTackled = false;
+  }
+
+  function powerShot(p) {
+    if (p.stunTime > 0) return;
+    var dx = ball.x - p.x, dy = ball.y - p.y;
+    var dist = Math.hypot(dx, dy) || 0.01;
+    var range = p.r + ball.r + 14;
+    if (dist < range) {
+      var nx = dx / dist, ny = dy / dist;
+      ball.vx = nx * POWER_SHOT_SPEED;
+      ball.vy = ny * POWER_SHOT_SPEED;
+      p.kickTime = 14;
+      p.kickDirX = nx;
+      p.kickDirY = ny;
+      lastTouch = p;
+    }
+  }
+
+  function checkTackle(slider, other) {
+    if (!slider.sliding || slider.hasTackled || other.stunTime > 0) return;
+    var dx = other.x - slider.x, dy = other.y - slider.y;
+    var dist = Math.hypot(dx, dy) || 0.01;
+    var minDist = slider.r + other.r;
+    if (dist < minDist) {
+      var nx = dx / dist, ny = dy / dist;
+      var knock = minDist + 20;
+      other.x = slider.x + nx * knock;
+      other.y = slider.y + ny * knock;
+      other.stunTime = STUN_DURATION;
+      slider.hasTackled = true;
+    }
   }
 
   var p1Select = document.getElementById('p1Select');
@@ -963,11 +999,11 @@
     lastTouch = null;
     scoreDisplay.textContent = '0 - 0';
     resetPositions();
-    p1.sliding = false; p1.slideTimer = 0; p1.slideCooldown = 0;
-    p2.sliding = false; p2.slideTimer = 0; p2.slideCooldown = 0;
+    p1.sliding = false; p1.slideTimer = 0; p1.slideCooldown = 0; p1.hasTackled = false; p1.stunTime = 0;
+    p2.sliding = false; p2.slideTimer = 0; p2.slideCooldown = 0; p2.hasTackled = false; p2.stunTime = 0;
 
-    p1ControlLabel.textContent = p1.name + ': W A S D (glijden: Spatie)';
-    p2ControlLabel.textContent = vsBot ? (p2.name + ' (bot)') : (p2.name + ': ↑ ↓ ← → (glijden: Enter)');
+    p1ControlLabel.textContent = p1.name + ': W A S D (glijden: Spatie, power shot: F)';
+    p2ControlLabel.textContent = vsBot ? (p2.name + ' (bot)') : (p2.name + ': ↑ ↓ ← → (glijden: Enter, power shot: /)');
 
     gameMenu.style.display = 'none';
     gameArea.style.display = 'block';
@@ -995,6 +1031,14 @@
     if (p.y > H - p.r) p.y = H - p.r;
   }
 
+  function updateStun(p) {
+    if (p.stunTime > 0) {
+      p.stunTime--;
+      return true;
+    }
+    return false;
+  }
+
   function updateSlide(p) {
     if (p.sliding) {
       p.x += p.slideDirX * SLIDE_SPEED;
@@ -1018,7 +1062,7 @@
     if (keys['KeyD']) p1dx += 1;
     var len1 = Math.hypot(p1dx, p1dy) || 1;
     if (p1dx !== 0 || p1dy !== 0) { p1.facingX = p1dx / len1; p1.facingY = p1dy / len1; }
-    if (!updateSlide(p1)) {
+    if (!updateStun(p1) && !updateSlide(p1)) {
       p1.x += (p1dx / len1) * p1.speed;
       p1.y += (p1dy / len1) * p1.speed;
     }
@@ -1027,7 +1071,7 @@
       var bdx = ball.x - p2.x, bdy = ball.y - p2.y;
       var blen = Math.hypot(bdx, bdy) || 1;
       p2.facingX = bdx / blen; p2.facingY = bdy / blen;
-      if (!updateSlide(p2)) {
+      if (!updateStun(p2) && !updateSlide(p2)) {
         p2.x += (bdx / blen) * p2.speed * 0.88;
         p2.y += (bdy / blen) * p2.speed * 0.88;
       }
@@ -1039,12 +1083,17 @@
       if (keys['ArrowRight']) p2dx += 1;
       var len2 = Math.hypot(p2dx, p2dy) || 1;
       if (p2dx !== 0 || p2dy !== 0) { p2.facingX = p2dx / len2; p2.facingY = p2dy / len2; }
-      if (!updateSlide(p2)) {
+      if (!updateStun(p2) && !updateSlide(p2)) {
         p2.x += (p2dx / len2) * p2.speed;
         p2.y += (p2dy / len2) * p2.speed;
       }
     }
 
+    clampPlayer(p1);
+    clampPlayer(p2);
+
+    checkTackle(p1, p2);
+    checkTackle(p2, p1);
     clampPlayer(p1);
     clampPlayer(p2);
 
@@ -1146,6 +1195,9 @@
   function drawPlayer(p) {
     var x = p.x, y = p.y, r = p.r;
 
+    ctx.save();
+    if (p.stunTime > 0) ctx.globalAlpha = 0.45;
+
     if (p.sliding) {
       var angle = Math.atan2(p.slideDirY, p.slideDirX);
       ctx.save();
@@ -1186,6 +1238,7 @@
       ctx.lineWidth = 3;
       ctx.strokeText(p.name, x, y + r * 1.35 + 10);
       ctx.fillText(p.name, x, y + r * 1.35 + 10);
+      ctx.restore();
       return;
     }
 
@@ -1267,6 +1320,7 @@
     ctx.lineWidth = 3;
     ctx.strokeText(p.name, x, y + r * 1.35 + 10);
     ctx.fillText(p.name, x, y + r * 1.35 + 10);
+    ctx.restore();
   }
 
   function drawBall() {
