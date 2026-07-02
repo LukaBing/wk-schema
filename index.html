@@ -813,8 +813,8 @@
 
   var scoreRed = 0, scoreBlue = 0;
 
-  var p1 = { x: W * 0.25, y: H / 2, r: 22, color: '#c0392b', speed: 3.2, name: 'Ronaldo', number: 7 };
-  var p2 = { x: W * 0.75, y: H / 2, r: 22, color: '#1f4fd8', speed: 3.2, name: 'Messi', number: 10 };
+  var p1 = { x: W * 0.25, y: H / 2, r: 22, color: '#c0392b', speed: 3.2, name: 'Ronaldo', number: 7, kickTime: 0, kickDirX: 1, kickDirY: 0 };
+  var p2 = { x: W * 0.75, y: H / 2, r: 22, color: '#1f4fd8', speed: 3.2, name: 'Messi', number: 10, kickTime: 0, kickDirX: -1, kickDirY: 0 };
   var ball = { x: W / 2, y: H / 2, r: 11, vx: 0, vy: 0 };
 
   function resetPositions(scorerSide) {
@@ -864,7 +864,11 @@
         var kick = 4.5;
         ball.vx = nx * kick;
         ball.vy = ny * kick;
+        p.kickTime = 14;
+        p.kickDirX = nx;
+        p.kickDirY = ny;
       }
+      if (p.kickTime > 0) p.kickTime--;
     });
 
     ball.x += ball.vx;
@@ -931,10 +935,21 @@
     ctx.strokeStyle = '#222';
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.moveTo(x - 6, y + r * 0.35);
-    ctx.lineTo(x - 9, y + r * 1.05);
-    ctx.moveTo(x + 6, y + r * 0.35);
-    ctx.lineTo(x + 9, y + r * 1.05);
+    if (p.kickTime > 0) {
+      var kt = p.kickTime / 14;
+      var kdx = p.kickDirX, kdy = p.kickDirY;
+      // standbeen
+      ctx.moveTo(x - 6, y + r * 0.35);
+      ctx.lineTo(x - 8, y + r * 0.95);
+      // schoppend been, naar voren gezwaaid in de schietrichting
+      ctx.moveTo(x + 4, y + r * 0.35);
+      ctx.lineTo(x + 4 + kdx * r * 1.15 * kt, y + r * 0.35 + kdy * r * 0.55 * kt + r * 0.55 * (1 - kt));
+    } else {
+      ctx.moveTo(x - 6, y + r * 0.35);
+      ctx.lineTo(x - 9, y + r * 1.05);
+      ctx.moveTo(x + 6, y + r * 0.35);
+      ctx.lineTo(x + 9, y + r * 1.05);
+    }
     ctx.stroke();
 
     // armen
