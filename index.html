@@ -307,6 +307,60 @@
     margin-top: 10px;
   }
 
+  .game-menu {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 20px;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  .menu-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+
+  .menu-row select {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+  }
+
+  .menu-warning {
+    color: var(--brand);
+    font-size: 12px;
+    font-weight: bold;
+    min-height: 16px;
+    margin-bottom: 8px;
+  }
+
+  #startBtn, #menuBtn {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    background: #1b6e2e;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    cursor: pointer;
+  }
+
+  #menuBtn {
+    background: var(--navy);
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  #startBtn:hover, #menuBtn:hover {
+    opacity: 0.85;
+  }
+
   /* Top scorers */
   .scorers-grid {
     display: grid;
@@ -776,16 +830,51 @@
 
   <div class="game-box">
     <span class="flag game">Spel</span>
-    <h2>Speel Zelf Mee &mdash; 2-Speler Voetbal</h2>
-    <div class="sub">Klik op het veld om te beginnen. Ronaldo (rood) beweegt met W A S D, Messi (blauw) met de pijltjestoetsen. Raak de bal om 'm weg te schieten.</div>
+    <h2>Speel Zelf Mee &mdash; Kies Je Speler</h2>
+    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten.</div>
 
-    <div class="game-controls">
-      <span class="p1">Ronaldo: W A S D</span>
-      <span class="p2">Messi: &uarr; &darr; &larr; &rarr;</span>
+    <div id="gameMenu" class="game-menu">
+      <div class="menu-row">
+        <label for="p1Select">Speler 1 (W A S D)</label>
+        <select id="p1Select">
+          <option value="messi">Messi</option>
+          <option value="ronaldo" selected>Ronaldo</option>
+          <option value="mbappe">Mbapp&eacute;</option>
+          <option value="vandijk">Van Dijk</option>
+          <option value="haaland">Haaland</option>
+        </select>
+      </div>
+
+      <div class="menu-row">
+        <label><input type="radio" name="mode" value="pvp" checked> Tegen een vriend (pijltjestoetsen)</label>
+        <label><input type="radio" name="mode" value="bot"> Tegen de computer</label>
+      </div>
+
+      <div class="menu-row">
+        <label for="p2Select" id="p2Label">Speler 2 (pijltjes)</label>
+        <select id="p2Select">
+          <option value="messi" selected>Messi</option>
+          <option value="ronaldo">Ronaldo</option>
+          <option value="mbappe">Mbapp&eacute;</option>
+          <option value="vandijk">Van Dijk</option>
+          <option value="haaland">Haaland</option>
+        </select>
+      </div>
+
+      <div id="menuWarning" class="menu-warning"></div>
+
+      <button id="startBtn" type="button">Start Spel</button>
     </div>
 
-    <canvas id="pitchCanvas" width="700" height="400" tabindex="0"></canvas>
-    <div class="game-hint">Score: <span id="scoreDisplay">0 - 0</span></div>
+    <div id="gameArea" style="display:none;">
+      <div class="game-controls">
+        <span class="p1" id="p1ControlLabel">Ronaldo: W A S D</span>
+        <span class="p2" id="p2ControlLabel">Messi: &uarr; &darr; &larr; &rarr;</span>
+      </div>
+
+      <canvas id="pitchCanvas" width="700" height="400" tabindex="0"></canvas>
+      <div class="game-hint">Score: <span id="scoreDisplay">0 - 0</span> &nbsp; <button id="menuBtn" type="button">Terug naar menu</button></div>
+    </div>
   </div>
 
 </main>
@@ -800,6 +889,14 @@
   var GOAL_BOTTOM = GOAL_TOP + GOAL_H;
   var scoreDisplay = document.getElementById('scoreDisplay');
 
+  var CHAR_DATA = {
+    messi:   { name: 'Messi',    color: '#75AADB', number: 10 },
+    ronaldo: { name: 'Ronaldo',  color: '#C8102E', number: 7 },
+    mbappe:  { name: 'Mbappé', color: '#00296B', number: 10 },
+    vandijk: { name: 'Van Dijk', color: '#FF7900', number: 4 },
+    haaland: { name: 'Haaland',  color: '#E8B923', number: 9 }
+  };
+
   var keys = {};
   canvas.addEventListener('keydown', function (e) {
     var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
@@ -812,10 +909,59 @@
   canvas.addEventListener('click', function () { canvas.focus(); });
 
   var scoreRed = 0, scoreBlue = 0;
+  var vsBot = false;
+  var gameStarted = false;
 
-  var p1 = { x: W * 0.25, y: H / 2, r: 22, color: '#c0392b', speed: 3.2, name: 'Ronaldo', number: 7, kickTime: 0, kickDirX: 1, kickDirY: 0 };
-  var p2 = { x: W * 0.75, y: H / 2, r: 22, color: '#1f4fd8', speed: 3.2, name: 'Messi', number: 10, kickTime: 0, kickDirX: -1, kickDirY: 0 };
+  var p1 = Object.assign({ x: W * 0.25, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: 1, kickDirY: 0 }, CHAR_DATA.ronaldo);
+  var p2 = Object.assign({ x: W * 0.75, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: -1, kickDirY: 0 }, CHAR_DATA.messi);
   var ball = { x: W / 2, y: H / 2, r: 11, vx: 0, vy: 0 };
+
+  var p1Select = document.getElementById('p1Select');
+  var p2Select = document.getElementById('p2Select');
+  var p2Label = document.getElementById('p2Label');
+  var menuWarning = document.getElementById('menuWarning');
+  var startBtn = document.getElementById('startBtn');
+  var menuBtn = document.getElementById('menuBtn');
+  var gameMenu = document.getElementById('gameMenu');
+  var gameArea = document.getElementById('gameArea');
+  var p1ControlLabel = document.getElementById('p1ControlLabel');
+  var p2ControlLabel = document.getElementById('p2ControlLabel');
+
+  document.querySelectorAll('input[name="mode"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      vsBot = document.querySelector('input[name="mode"]:checked').value === 'bot';
+      p2Label.textContent = vsBot ? 'Bot speelt als' : 'Speler 2 (pijltjes)';
+    });
+  });
+
+  startBtn.addEventListener('click', function () {
+    var p1Key = p1Select.value, p2Key = p2Select.value;
+    if (!vsBot && p1Key === p2Key) {
+      menuWarning.textContent = 'Kies twee verschillende spelers.';
+      return;
+    }
+    menuWarning.textContent = '';
+
+    Object.assign(p1, CHAR_DATA[p1Key]);
+    Object.assign(p2, CHAR_DATA[p2Key]);
+    scoreRed = 0; scoreBlue = 0;
+    scoreDisplay.textContent = '0 - 0';
+    resetPositions();
+
+    p1ControlLabel.textContent = p1.name + ': W A S D';
+    p2ControlLabel.textContent = vsBot ? (p2.name + ' (bot)') : (p2.name + ': ↑ ↓ ← →');
+
+    gameMenu.style.display = 'none';
+    gameArea.style.display = 'block';
+    gameStarted = true;
+    canvas.focus();
+  });
+
+  menuBtn.addEventListener('click', function () {
+    gameStarted = false;
+    gameArea.style.display = 'none';
+    gameMenu.style.display = 'block';
+  });
 
   function resetPositions(scorerSide) {
     p1.x = W * 0.25; p1.y = H / 2;
@@ -841,14 +987,21 @@
     p1.x += (p1dx / len1) * p1.speed;
     p1.y += (p1dy / len1) * p1.speed;
 
-    var p2dx = 0, p2dy = 0;
-    if (keys['ArrowUp']) p2dy -= 1;
-    if (keys['ArrowDown']) p2dy += 1;
-    if (keys['ArrowLeft']) p2dx -= 1;
-    if (keys['ArrowRight']) p2dx += 1;
-    var len2 = Math.hypot(p2dx, p2dy) || 1;
-    p2.x += (p2dx / len2) * p2.speed;
-    p2.y += (p2dy / len2) * p2.speed;
+    if (vsBot) {
+      var bdx = ball.x - p2.x, bdy = ball.y - p2.y;
+      var blen = Math.hypot(bdx, bdy) || 1;
+      p2.x += (bdx / blen) * p2.speed * 0.88;
+      p2.y += (bdy / blen) * p2.speed * 0.88;
+    } else {
+      var p2dx = 0, p2dy = 0;
+      if (keys['ArrowUp']) p2dy -= 1;
+      if (keys['ArrowDown']) p2dy += 1;
+      if (keys['ArrowLeft']) p2dx -= 1;
+      if (keys['ArrowRight']) p2dx += 1;
+      var len2 = Math.hypot(p2dx, p2dy) || 1;
+      p2.x += (p2dx / len2) * p2.speed;
+      p2.y += (p2dy / len2) * p2.speed;
+    }
 
     clampPlayer(p1);
     clampPlayer(p2);
@@ -1027,8 +1180,10 @@
   }
 
   function loop() {
-    update();
-    draw();
+    if (gameStarted) {
+      update();
+      draw();
+    }
     requestAnimationFrame(loop);
   }
 
