@@ -831,7 +831,7 @@
   <div class="game-box">
     <span class="flag game">Spel</span>
     <h2>Speel Zelf Mee &mdash; Kies Je Speler</h2>
-    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten.</div>
+    <div class="sub">Kies een speler, kies of je tegen een vriend of tegen de computer speelt, en druk op start. Raak de bal om 'm weg te schieten. Speler 1 glijdt met Spatie, Speler 2 met Enter.</div>
 
     <div id="gameMenu" class="game-menu">
       <div class="menu-row">
@@ -897,11 +897,17 @@
     haaland: { name: 'Haaland',  color: '#E8B923', number: 9 }
   };
 
+  var SLIDE_DURATION = 16;
+  var SLIDE_SPEED = 7.5;
+  var SLIDE_COOLDOWN = 50;
+
   var keys = {};
   canvas.addEventListener('keydown', function (e) {
-    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    var used = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter'];
     if (used.indexOf(e.code) !== -1) e.preventDefault();
     keys[e.code] = true;
+    if (e.code === 'Space' && !e.repeat) startSlide(p1);
+    if (e.code === 'Enter' && !e.repeat && !vsBot) startSlide(p2);
   });
   canvas.addEventListener('keyup', function (e) {
     keys[e.code] = false;
@@ -913,9 +919,17 @@
   var vsBot = false;
   var gameStarted = false;
 
-  var p1 = Object.assign({ x: W * 0.25, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: 1, kickDirY: 0 }, CHAR_DATA.ronaldo);
-  var p2 = Object.assign({ x: W * 0.75, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: -1, kickDirY: 0 }, CHAR_DATA.messi);
+  var p1 = Object.assign({ x: W * 0.25, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: 1, kickDirY: 0, facingX: 1, facingY: 0, sliding: false, slideTimer: 0, slideCooldown: 0, slideDirX: 1, slideDirY: 0 }, CHAR_DATA.ronaldo);
+  var p2 = Object.assign({ x: W * 0.75, y: H / 2, r: 22, speed: 3.2, kickTime: 0, kickDirX: -1, kickDirY: 0, facingX: -1, facingY: 0, sliding: false, slideTimer: 0, slideCooldown: 0, slideDirX: -1, slideDirY: 0 }, CHAR_DATA.messi);
   var ball = { x: W / 2, y: H / 2, r: 11, vx: 0, vy: 0 };
+
+  function startSlide(p) {
+    if (p.sliding || p.slideCooldown > 0) return;
+    p.sliding = true;
+    p.slideTimer = SLIDE_DURATION;
+    p.slideDirX = p.facingX;
+    p.slideDirY = p.facingY;
+  }
 
   var p1Select = document.getElementById('p1Select');
   var p2Select = document.getElementById('p2Select');
@@ -949,9 +963,11 @@
     lastTouch = null;
     scoreDisplay.textContent = '0 - 0';
     resetPositions();
+    p1.sliding = false; p1.slideTimer = 0; p1.slideCooldown = 0;
+    p2.sliding = false; p2.slideTimer = 0; p2.slideCooldown = 0;
 
-    p1ControlLabel.textContent = p1.name + ': W A S D';
-    p2ControlLabel.textContent = vsBot ? (p2.name + ' (bot)') : (p2.name + ': ↑ ↓ ← →');
+    p1ControlLabel.textContent = p1.name + ': W A S D (glijden: Spatie)';
+    p2ControlLabel.textContent = vsBot ? (p2.name + ' (bot)') : (p2.name + ': ↑ ↓ ← → (glijden: Enter)');
 
     gameMenu.style.display = 'none';
     gameArea.style.display = 'block';
@@ -979,6 +995,21 @@
     if (p.y > H - p.r) p.y = H - p.r;
   }
 
+  function updateSlide(p) {
+    if (p.sliding) {
+      p.x += p.slideDirX * SLIDE_SPEED;
+      p.y += p.slideDirY * SLIDE_SPEED;
+      p.slideTimer--;
+      if (p.slideTimer <= 0) {
+        p.sliding = false;
+        p.slideCooldown = SLIDE_COOLDOWN;
+      }
+      return true;
+    }
+    if (p.slideCooldown > 0) p.slideCooldown--;
+    return false;
+  }
+
   function update() {
     var p1dx = 0, p1dy = 0;
     if (keys['KeyW']) p1dy -= 1;
@@ -986,14 +1017,20 @@
     if (keys['KeyA']) p1dx -= 1;
     if (keys['KeyD']) p1dx += 1;
     var len1 = Math.hypot(p1dx, p1dy) || 1;
-    p1.x += (p1dx / len1) * p1.speed;
-    p1.y += (p1dy / len1) * p1.speed;
+    if (p1dx !== 0 || p1dy !== 0) { p1.facingX = p1dx / len1; p1.facingY = p1dy / len1; }
+    if (!updateSlide(p1)) {
+      p1.x += (p1dx / len1) * p1.speed;
+      p1.y += (p1dy / len1) * p1.speed;
+    }
 
     if (vsBot) {
       var bdx = ball.x - p2.x, bdy = ball.y - p2.y;
       var blen = Math.hypot(bdx, bdy) || 1;
-      p2.x += (bdx / blen) * p2.speed * 0.88;
-      p2.y += (bdy / blen) * p2.speed * 0.88;
+      p2.facingX = bdx / blen; p2.facingY = bdy / blen;
+      if (!updateSlide(p2)) {
+        p2.x += (bdx / blen) * p2.speed * 0.88;
+        p2.y += (bdy / blen) * p2.speed * 0.88;
+      }
     } else {
       var p2dx = 0, p2dy = 0;
       if (keys['ArrowUp']) p2dy -= 1;
@@ -1001,8 +1038,11 @@
       if (keys['ArrowLeft']) p2dx -= 1;
       if (keys['ArrowRight']) p2dx += 1;
       var len2 = Math.hypot(p2dx, p2dy) || 1;
-      p2.x += (p2dx / len2) * p2.speed;
-      p2.y += (p2dy / len2) * p2.speed;
+      if (p2dx !== 0 || p2dy !== 0) { p2.facingX = p2dx / len2; p2.facingY = p2dy / len2; }
+      if (!updateSlide(p2)) {
+        p2.x += (p2dx / len2) * p2.speed;
+        p2.y += (p2dy / len2) * p2.speed;
+      }
     }
 
     clampPlayer(p1);
@@ -1016,7 +1056,7 @@
         var nx = dx / dist, ny = dy / dist;
         ball.x = p.x + nx * minDist;
         ball.y = p.y + ny * minDist;
-        var kick = 4.5;
+        var kick = p.sliding ? 8 : 4.5;
         ball.vx = nx * kick;
         ball.vy = ny * kick;
         p.kickTime = 14;
@@ -1105,6 +1145,49 @@
 
   function drawPlayer(p) {
     var x = p.x, y = p.y, r = p.r;
+
+    if (p.sliding) {
+      var angle = Math.atan2(p.slideDirY, p.slideDirX);
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 1.15, r * 0.5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#fff';
+      ctx.stroke();
+
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(r * 0.3, 0);
+      ctx.lineTo(r * 1.7, 0);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(-r * 0.7, 0, r * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#f2c19c';
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#8a5a34';
+      ctx.stroke();
+
+      ctx.restore();
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 11px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+      ctx.lineWidth = 3;
+      ctx.strokeText(p.name, x, y + r * 1.35 + 10);
+      ctx.fillText(p.name, x, y + r * 1.35 + 10);
+      return;
+    }
 
     ctx.lineCap = 'round';
 
