@@ -909,6 +909,7 @@
   canvas.addEventListener('click', function () { canvas.focus(); });
 
   var scoreRed = 0, scoreBlue = 0;
+  var lastTouch = null;
   var vsBot = false;
   var gameStarted = false;
 
@@ -945,6 +946,7 @@
     Object.assign(p1, CHAR_DATA[p1Key]);
     Object.assign(p2, CHAR_DATA[p2Key]);
     scoreRed = 0; scoreBlue = 0;
+    lastTouch = null;
     scoreDisplay.textContent = '0 - 0';
     resetPositions();
 
@@ -1020,6 +1022,7 @@
         p.kickTime = 14;
         p.kickDirX = nx;
         p.kickDirY = ny;
+        lastTouch = p;
       }
       if (p.kickTime > 0) p.kickTime--;
     });
@@ -1033,38 +1036,44 @@
     var hitBottom = ball.y > H - ball.r;
     var hitLeft = ball.x < ball.r;
     var hitRight = ball.x > W - ball.r;
+    var inGoalMouth = ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM;
 
-    var CORNER_ZONE = 100;
-    var nearCorner = (ball.x < CORNER_ZONE || ball.x > W - CORNER_ZONE) &&
-                      (ball.y < CORNER_ZONE || ball.y > H - CORNER_ZONE);
-
-    if ((hitTop || hitBottom || hitLeft || hitRight) && nearCorner) {
-      // bal raakt een hoek: bal is uit, terug naar het midden
+    if (hitLeft && inGoalMouth) {
+      scoreBlue++;
+      scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
       resetPositions();
+      lastTouch = null;
+      return;
+    }
+    if (hitRight && inGoalMouth) {
+      scoreRed++;
+      scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
+      resetPositions();
+      lastTouch = null;
       return;
     }
 
-    if (hitTop) { ball.y = ball.r; ball.vy *= -1; }
-    if (hitBottom) { ball.y = H - ball.r; ball.vy *= -1; }
+    if (hitTop || hitBottom || hitLeft || hitRight) {
+      // bal raakt de buitenlijn: bal is uit, de andere speler krijgt 'm
+      giveBallToOther();
+      return;
+    }
+  }
 
-    if (hitLeft) {
-      if (ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM) {
-        scoreBlue++;
-        scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
-        resetPositions();
-      } else {
-        ball.x = ball.r; ball.vx *= -1;
-      }
+  function giveBallToOther() {
+    var receiver = (lastTouch === p1) ? p2 : (lastTouch === p2) ? p1 : null;
+    if (!receiver) {
+      ball.x = W / 2; ball.y = H / 2; ball.vx = 0; ball.vy = 0;
+      return;
     }
-    if (hitRight) {
-      if (ball.y > GOAL_TOP && ball.y < GOAL_BOTTOM) {
-        scoreRed++;
-        scoreDisplay.textContent = scoreRed + ' - ' + scoreBlue;
-        resetPositions();
-      } else {
-        ball.x = W - ball.r; ball.vx *= -1;
-      }
-    }
+    var dir = (receiver.x < W / 2) ? 1 : -1;
+    ball.x = receiver.x + dir * (receiver.r + ball.r + 18);
+    ball.y = receiver.y;
+    ball.vx = 0; ball.vy = 0;
+    if (ball.x < ball.r) ball.x = ball.r;
+    if (ball.x > W - ball.r) ball.x = W - ball.r;
+    if (ball.y < ball.r) ball.y = ball.r;
+    if (ball.y > H - ball.r) ball.y = H - ball.r;
   }
 
   function drawPitch() {
